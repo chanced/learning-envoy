@@ -1,0 +1,17 @@
+version: "3.7"
+x-node: &default-node
+  image: node:14.5.0
+  volumes:
+    - node__modules:/app/code/node_modules
+    - .:/app/code
+  working_dir: /app/code
+services:
+  install:
+    <<: *default-node
+    command: yarn install
+  build:
+    <<: *default-node
+    command: yarn tsc
+volumes:
+  node__modules:
+    external: true

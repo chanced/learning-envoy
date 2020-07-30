@@ -1,0 +1,22 @@
+{
+  "name": "@learning-envoy/api",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "no",
+  "private": true,
+  "dependencies": {
+    "@koa/router": "9.3.1",
+    "@types/koa": "latest",
+    "@types/koa__router": "latest",
+    "@types/node": "12.12.2",
+    "@types/ws": "^7.2.6",
+    "koa": "2.13.0",
+    "ts-node": "8.10.2",
+    "ts-node-dev": "1.0.0-pre.52",
+    "typescript": "3.4.3",
+    "ws": "^7.3.1"
+  },
+  "scripts": {
+    "start": "ts-node-dev --respawn index.ts"
+  }
+}

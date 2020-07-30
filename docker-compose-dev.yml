@@ -1,0 +1,48 @@
+version: "3.7"
+x-api_dev: &api_dev
+  image: node:14.5.0
+  volumes:
+    - node__modules:/app/code/node_modules
+    - .:/app/code
+  command: yarn api start
+  working_dir: /app/code
+x-client_dev: &client_dev
+  image: node:14.5.0
+  volumes:
+    - node__modules:/app/code/node_modules
+    - .:/app/code
+  command: yarn client dev
+  working_dir: /app/code
+services:
+  api_1:
+    <<: *api_dev
+    container_name: api_1
+    ports:
+      - 7000:7000
+    environment:
+      APP_NAME: api_1
+  api_2:
+    <<: *api_dev
+    container_name: api_2
+    ports:
+      - 7001:7000
+    environment:
+      APP_NAME: api_2
+  client:
+    <<: *client_dev
+    container_name: client_1
+    ports:
+      - 3000:3000
+  envoy:
+    container_name: envoy
+    image: envoyproxy/envoy:v1.14-latest
+    ports:
+      - 8080:8080
+      - 8081:10000
+      - 9901:9901
+    volumes:
+      - ./dev.envoy.yml:/etc/envoy/envoy.yaml
+
+volumes:
+  node__modules:
+    external: true
