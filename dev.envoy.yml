@@ -29,15 +29,15 @@ static_resources:
                           route:
                             cluster: api
                         - match:
+                            prefix: "/sockets"
+                          route:
+                            cluster: sockets
+                            upgrade_configs:
+                              - upgrade_type: websocket
+                        - match:
                             prefix: "/"
                           route:
                             cluster: frontend
-                        - match:
-                            prefix: "/socket"
-                          route:
-                            cluster: api
-                            upgrade_configs:
-                              - upgrade_type: websocket
 
                 http_filters:
                   - name: envoy.filters.http.router
@@ -58,7 +58,7 @@ static_resources:
       type: strict_dns
       lb_policy: round_robin
       load_assignment:
-        cluster_name: api #im not sure about this?
+        cluster_name: api
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -78,7 +78,7 @@ static_resources:
       connect_timeout: 1s
       lb_policy: round_robin
       load_assignment:
-        cluster_name: api #im not sure about this?
+        cluster_name: frontend
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -86,6 +86,20 @@ static_resources:
                     socket_address:
                       address: frontend
                       port_value: 3000
+    - name: sockets
+      type: strict_dns
+      connect_timeout: 1s
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: sockets
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: sockets
+                      port_value: 7777
+
 layered_runtime:
   layers:
     - name: static_layer__0

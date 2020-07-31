@@ -1,6 +1,7 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import http from "http";
+
 const router = new Router();
 
 router.get("/api", async (ctx, next) => {
@@ -24,10 +25,4 @@ app.use(router.middleware());
 
 const server = http.createServer(app.callback());
 
-server.listen(7000, () => {
-  console.log("http://localhost:7000");
-});
-
-server.on("connection", (socket) => {
-  console.log("connection", socket);
-});
+server.listen(7000, () => {});

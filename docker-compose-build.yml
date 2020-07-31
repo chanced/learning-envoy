@@ -12,6 +12,7 @@ services:
   build:
     <<: *default-node
     command: yarn tsc
+
 volumes:
   node__modules:
     external: true

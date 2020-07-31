@@ -1,38 +1,42 @@
 version: "3.7"
-x-api_dev: &api_dev
+x-sockets_dev: &node_dev
   image: node:14.5.0
   volumes:
     - node__modules:/app/code/node_modules
     - .:/app/code
-  command: yarn api start
   working_dir: /app/code
-x-frontend_dev: &frontend_dev
-  image: node:14.5.0
-  volumes:
-    - node__modules:/app/code/node_modules
-    - .:/app/code
-  command: yarn frontend dev
-  working_dir: /app/code
+
 services:
   api1:
-    <<: *api_dev
+    <<: *node_dev
     container_name: api1
-    ports:
-      - 7000:7000
+    command: yarn api dev
     expose:
-      - "7000"
+      - 7000
     environment:
       APP_NAME: api1
     networks:
       learning_envoy_mesh:
         aliases:
           - api1
-
   api2:
-    <<: *api_dev
+    <<: *node_dev
+    command: yarn api dev
     container_name: api2
     expose:
-      - "7000"
+      - 7000
+    environment:
+      APP_NAME: api2
+    networks:
+      learning_envoy_mesh:
+        aliases:
+          - api2
+  sockets:
+    <<: *node_dev
+    command: yarn sockets dev
+    container_name: sockets
+    expose:
+      - 7777
     environment:
       APP_NAME: api2
     networks:
@@ -41,12 +45,11 @@ services:
           - api2
 
   frontend:
-    <<: *frontend_dev
+    <<: *node_dev
+    command: yarn frontend dev
     container_name: frontend
-    ports:
-      - 3000:3000
     expose:
-      - "3000"
+      - 3000
     networks:
       learning_envoy_mesh:
         aliases:
