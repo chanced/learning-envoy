@@ -59,10 +59,12 @@ services:
       - 8080:8080
       - 8081:8081
       - 9901:9901
+
     volumes:
       - ./dev.envoy.yml:/etc/envoy/envoy.yaml
       - ./learning-envoy-crt.pem:/etc/envoy/learning-envoy-crt.pem
       - ./learning-envoy-key.pem:/etc/envoy/learning-envoy-key.pem
+      - ./logs:/logs
 volumes:
   node__modules:
     external: true

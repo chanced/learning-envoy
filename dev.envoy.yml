@@ -1,5 +1,8 @@
 admin:
-  access_log_path: /tmp/admin_access.log
+  access_log_path: /logs/admin_access.log
+  profile_path: /logs/envoy.prof
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901 }
 
 static_resources:
   listeners:
