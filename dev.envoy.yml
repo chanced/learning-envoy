@@ -31,7 +31,6 @@ static_resources:
                             cluster: api
                             upgrade_configs:
                               - upgrade_type: websocket
-
                         - match:
                             prefix: "/api"
                           route:
@@ -90,5 +89,5 @@ layered_runtime:
         envoy:
           resource_limits:
             listener:
-              example_listener_name:
+              learning_envoy_listener:
                 connection_limit: 10000
