@@ -6,43 +6,66 @@ x-api_dev: &api_dev
     - .:/app/code
   command: yarn api start
   working_dir: /app/code
-x-client_dev: &client_dev
+x-frontend_dev: &frontend_dev
   image: node:14.5.0
   volumes:
     - node__modules:/app/code/node_modules
     - .:/app/code
-  command: yarn client dev
+  command: yarn frontend dev
   working_dir: /app/code
 services:
-  api_1:
+  api1:
     <<: *api_dev
-    container_name: api_1
+    container_name: api1
     ports:
       - 7000:7000
+    expose:
+      - "7000"
     environment:
-      APP_NAME: api_1
-  api_2:
+      APP_NAME: api1
+    networks:
+      learning_envoy_mesh:
+        aliases:
+          - api1
+
+  api2:
     <<: *api_dev
-    container_name: api_2
+    container_name: api2
     ports:
       - 7001:7000
+    expose:
+      - "7000"
     environment:
-      APP_NAME: api_2
-  client:
-    <<: *client_dev
-    container_name: client_1
+      APP_NAME: api2
+    networks:
+      learning_envoy_mesh:
+        aliases:
+          - api2
+
+  frontend:
+    <<: *frontend_dev
+    container_name: frontend
     ports:
       - 3000:3000
+    networks:
+      learning_envoy_mesh:
+        aliases:
+          - frontend
+
   envoy:
     container_name: envoy
     image: envoyproxy/envoy:v1.14-latest
     ports:
       - 8080:8080
-      - 8081:10000
+      - 8081:8081
       - 9901:9901
     volumes:
       - ./dev.envoy.yml:/etc/envoy/envoy.yaml
-
+      - ./learning-envoy-crt.pem:/etc/envoy/learning-envoy-crt.pem
+      - ./learning-envoy-key.pem:/etc/envoy/learning-envoy-key.pem
 volumes:
   node__modules:
     external: true
+
+networks:
+  learning_envoy_mesh: {}

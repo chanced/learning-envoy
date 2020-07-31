@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "client": "yarn workspace @learning-envoy/client",
+    "frontend": "yarn workspace @learning-envoy/frontend",
     "api": "yarn workspace @learning-envoy/api"
   }
 }

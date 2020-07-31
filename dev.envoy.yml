@@ -3,8 +3,7 @@ admin:
 
 static_resources:
   listeners:
-    - name: api
-      address:
+    - address:
         socket_address:
           address: 0.0.0.0
           port_value: 8080
@@ -14,49 +13,73 @@ static_resources:
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 stat_prefix: ingress_http
-                codec_type: AUTO
+                codec_type: auto
                 use_remote_address: true
                 route_config:
-                  name: app_route
+                  name: envoy.filters.network.http_connection_manager
                   virtual_hosts:
-                    - name: api_route
+                    - name: local_route
                       domains: ["*"]
                       routes:
                         - match:
                             prefix: "/"
                           route:
-                            cluster: client_cluster
+                            cluster: frontend
+                        - match:
+                            prefix: "/socket"
+                          route:
+                            cluster: api
+                            upgrade_configs:
+                              - upgrade_type: websocket
+
                         - match:
                             prefix: "/api"
                           route:
-                            cluster: api_cluster
+                            cluster: api
                             upgrade_configs:
                               - upgrade_type: websocket
                 http_filters:
                   - name: envoy.filters.http.router
+                    typed_config: {}
+          transport_socket:
+            name: envoy.transport_socket.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              common_tls_context:
+                tls_certificates:
+                  certificate_chain:
+                    filename: /etc/envoy/learning-envoy-crt.pem
+                  private_key:
+                    filename: /etc/envoy/learning-envoy-key.pem
   clusters:
-    - name: api_cluster
+    - name: api
       connect_timeout: 1s
       type: strict_dns
-      lb_policy: ROUND_ROBIN
+      lb_policy: round_robin
       load_assignment:
-        cluster_name: api_cluster #im not sure about this?
+        cluster_name: api #im not sure about this?
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
-                      address: api_1
+                      address: api1
                       port_value: 7000
-                      ipv4_compat: true
               - endpoint:
                   address:
                     socket_address:
-                      address: api_2
-                      port_value: 7001
-                      ipv4_compat: true
-
-    - name: client_cluster
+                      address: api2
+                      port_value: 7000
+    - name: frontend
       type: strict_dns
-      lb_policy: ROUND_ROBIN
       connect_timeout: 1s
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: api #im not sure about this?
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: frontend
+                      port_value: 3000
