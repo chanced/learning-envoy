@@ -68,7 +68,7 @@ services:
       - ./dev.envoy.yml:/etc/front-envoy.yaml
       - ./learning-envoy-crt.pem:/etc/envoy/learning-envoy-crt.pem
       - ./learning-envoy-key.pem:/etc/envoy/learning-envoy-key.pem
-      - ./logs/:/etc/envoy/logs/
+      - ./logs/:/logs/
 volumes:
   node__modules:
     external: true
