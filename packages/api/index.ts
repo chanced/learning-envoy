@@ -3,15 +3,15 @@ import Router from "@koa/router";
 import http from "http";
 const router = new Router();
 
-router.get("/", async (ctx, next) => {
+router.get("/api", async (ctx, next) => {
   ctx.body = {
-    route: "/",
+    route: "/api",
     app: "api" + (process.env.APP_NAME || ""),
   };
   return next();
 });
 
-router.get("/test", async (ctx, next) => {
+router.get("/api/test", async (ctx, next) => {
   ctx.body = {
     route: "/test",
     app: "api" + (process.env.APP_NAME || ""),
@@ -26,4 +26,8 @@ const server = http.createServer(app.callback());
 
 server.listen(7000, () => {
   console.log("http://localhost:7000");
+});
+
+server.on("connection", (socket) => {
+  console.log("connection", socket);
 });

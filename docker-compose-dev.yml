@@ -31,8 +31,6 @@ services:
   api2:
     <<: *api_dev
     container_name: api2
-    ports:
-      - 7001:7000
     expose:
       - "7000"
     environment:
@@ -54,18 +52,20 @@ services:
         aliases:
           - frontend
   envoy:
-    container_name: envoy
-    image: envoyproxy/envoy:v1.14-latest
+    build:
+      context: .
+      dockerfile: Dockerfile-frontenvoy
     ports:
       - 8080:8080
       - 8081:8081
       - 9901:9901
-
+    networks:
+      - learning_envoy_mesh
     volumes:
-      - ./dev.envoy.yml:/etc/envoy/envoy.yaml
+      - ./dev.envoy.yml:/etc/front-envoy.yaml
       - ./learning-envoy-crt.pem:/etc/envoy/learning-envoy-crt.pem
       - ./learning-envoy-key.pem:/etc/envoy/learning-envoy-key.pem
-      - ./logs:/logs
+      - ./logs/:/etc/envoy/logs/
 volumes:
   node__modules:
     external: true

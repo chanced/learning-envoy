@@ -1,6 +1,6 @@
 admin:
-  access_log_path: /logs/admin_access.log
-  profile_path: /logs/envoy.prof
+  access_log_path: /etc/envoy/logs/admin_access.log
+  profile_path: /etc/envoy/logs/envoy.prof
   address:
     socket_address: { address: 127.0.0.1, port_value: 9901 }
 
@@ -25,6 +25,10 @@ static_resources:
                       domains: ["*"]
                       routes:
                         - match:
+                            prefix: "/api"
+                          route:
+                            cluster: api
+                        - match:
                             prefix: "/"
                           route:
                             cluster: frontend
@@ -34,12 +38,7 @@ static_resources:
                             cluster: api
                             upgrade_configs:
                               - upgrade_type: websocket
-                        - match:
-                            prefix: "/api"
-                          route:
-                            cluster: api
-                            upgrade_configs:
-                              - upgrade_type: websocket
+
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config: {}
@@ -67,11 +66,13 @@ static_resources:
                     socket_address:
                       address: api1
                       port_value: 7000
+          - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
                       address: api2
                       port_value: 7000
+
     - name: frontend
       type: strict_dns
       connect_timeout: 1s
