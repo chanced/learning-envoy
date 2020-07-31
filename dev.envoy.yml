@@ -83,3 +83,12 @@ static_resources:
                     socket_address:
                       address: frontend
                       port_value: 3000
+layered_runtime:
+  layers:
+    - name: static_layer__0
+      static_layer:
+        envoy:
+          resource_limits:
+            listener:
+              example_listener_name:
+                connection_limit: 10000
