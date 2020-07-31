@@ -38,11 +38,11 @@ services:
     expose:
       - 7777
     environment:
-      APP_NAME: api2
+      APP_NAME: sockets
     networks:
       learning_envoy_mesh:
         aliases:
-          - api2
+          - sockets
 
   frontend:
     <<: *node_dev
@@ -68,7 +68,7 @@ services:
       - ./dev.envoy.yml:/etc/front-envoy.yaml
       - ./learning-envoy-crt.pem:/etc/envoy/learning-envoy-crt.pem
       - ./learning-envoy-key.pem:/etc/envoy/learning-envoy-key.pem
-      - ./logs/:/logs/
+      - ./logs/:/var/log/envoy/
 volumes:
   node__modules:
     external: true
