@@ -47,11 +47,12 @@ services:
     container_name: frontend
     ports:
       - 3000:3000
+    expose:
+      - "3000"
     networks:
       learning_envoy_mesh:
         aliases:
           - frontend
-
   envoy:
     container_name: envoy
     image: envoyproxy/envoy:v1.14-latest
